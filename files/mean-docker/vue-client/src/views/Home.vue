@@ -3,6 +3,7 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <div>{{test}}</div>
     <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <el-button>aggas</el-button>
   </div>
 </template>
 
@@ -16,6 +17,17 @@ export default {
     return  {
       test:'aaa'
     };
+  },
+  mounted() {
+    this.$api({
+          method:'get',
+          url:'http://148.100.87.15:8080/api/todos',
+          data:{}
+        }).then(function(res){
+          console.log(res)
+        }).catch(function(err){
+          console.log(err)
+        })
   },
   components: {
     HelloWorld
