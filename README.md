@@ -43,5 +43,5 @@
     + docker中安装mongo镜像
       + sudo docker pull mongo 拉取远程镜像
       + sudo docker run --name mongo -d mongo 在后台运行name为docker
-      + sudo docker start mongo 运行镜像
+      + sudo docker start mongo 运行镜像 
 
