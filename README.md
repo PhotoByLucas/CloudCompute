@@ -37,9 +37,11 @@
       ~~~
         var Todo = require('./models/todo')
       ~~~
-  + docker 
+  + docker本地环境配置
+    + 安装docker(网上教程)
+    + 安装docker composer
     + docker中安装mongo镜像
-      + sudo docker pull mongo
-      + sudo docker run --name mongo -d mongo
-      + sudo docker start mongo
+      + sudo docker pull mongo 拉取远程镜像
+      + sudo docker run --name mongo -d mongo 在后台运行name为docker
+      + sudo docker start mongo 运行镜像
 
