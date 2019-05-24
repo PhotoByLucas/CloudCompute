@@ -9,6 +9,7 @@
     + 计划引入 axios element.ui
     + 通过接口直接请求后端输出
   + 后端
+    + 启动后端文件 在express-server下运行 **node server.js**
     + express-server文件
       + server.js
         + 后端文件入口 定义express实例
@@ -36,5 +37,9 @@
       ~~~
         var Todo = require('./models/todo')
       ~~~
-      
+  + docker 
+    + docker中安装mongo镜像
+      + sudo docker pull mongo
+      + sudo docker run --name mongo -d mongo
+      + sudo docker start mongo
 
