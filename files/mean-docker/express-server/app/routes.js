@@ -43,27 +43,41 @@ module.exports = function (app) {
     // create todo and send back all todos after creation
     //增加新客户
     app.post('/client', (req, res) => {
+        // 查询并设置id
+        let tempID=0;
+        let tempdata={};
+
+        Client.count({}, (err, res)=>{
+            if (err) {
+                console.log("Error:" + err);
+            }
+            else {
+                console.log("Res:" + res);
+                tempID=res+1;
+            }
+        }).then(()=>{
+            // count函数查询为异步操作
+            tempdata=req.query;
+            tempdata.clientID=tempID;
+
+            Client.create(tempdata,(err,ers)=>{
+                if(err){
+                    res.send('err1');
+                }else{
+                    Client.find(function (err, client) {
         
-        // create a todo, information comes from AJAX request from Angular
-        // console.log(req.body)
-        // console.log(req.params)
-        // console.log(req.query)
-
-        Client.create(req.query,(err,hero)=>{
-        if(err){
-            res.send('err1');
-        }else{
-            Client.find(function (err, client) {
-
-                // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                if (err) {
-                    res.send('err2');
+                        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                        if (err) {
+                            res.send('err2');
+                        }
+                
+                        res.json(client); // return all todos in JSON format
+                    });
                 }
+                });    
+        })
         
-                res.json(client); // return all todos in JSON format
-            });
-        }
-        });    
+
     });
     //更新个人信息
     app.put("/client/modify",(req,res)=>{
@@ -80,10 +94,7 @@ module.exports = function (app) {
         Client.update(
             {clientID:req.query.id},
             {
-                $set:{
-                    name:req.query.name,
-
-                }
+                name:req.query.name,
             },
             { 
                 new:true
@@ -92,13 +103,13 @@ module.exports = function (app) {
         .catch(err=>res.json(err));
     });
     //修改密码
-    app.put("/client/:id",(req,res)=>{
-        Client.UpdatePassword(
+    app.put("/client/modifyPassword",(req,res)=>{
+        Client.update(
             {_id:req.params.id},
             {
-                $set:{
+                
                     password:req.body.password
-                }
+                
             },
             {
                 new:true
