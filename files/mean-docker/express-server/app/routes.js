@@ -78,9 +78,6 @@ module.exports = function (app) {
         //     //     }
         //     //     });  
         // })
-
-
-
     });
     //更新个人信息
     app.put("/client/modify",(req,res)=>{
@@ -168,7 +165,7 @@ module.exports = function (app) {
             }
             else {
                 console.log("Res:" + res);
-                tempID=res+2;
+                tempID=res+1;
             }
         }).then(()=>{
             // count函数查询为异步操作
@@ -227,7 +224,7 @@ module.exports = function (app) {
             }
             else {
                 console.log("Res:" + res);
-                tempID=res+2;
+                tempID=res+1;
             }
         }).then(()=>{
             // count函数查询为异步操作
@@ -252,7 +249,7 @@ module.exports = function (app) {
         })       
     });
     //销卡
-    app.delete('/account/:id', (req, res)=> {
+/*     app.delete('/account/:id', (req, res)=> {
        Account.findByIdAndRemove({
             _id: req.params.id
         }).then(account=>{account.save().then(account=>{
@@ -262,9 +259,27 @@ module.exports = function (app) {
         return res.status(404).json(err);
     })
     });
+ */
+app.put("/account/delete",(req,res)=>{
+    Account.update(
+        {accountID:req.query.id},
+        {
+            
+                flag: true
+            
+        },
+        {
+            new:true
+        }).then(account=>res.json(account))
+        .catch(err=>res.json(err));
+});
     //存款 用accountID查
     app.post('/account/deposit',function (req,res){
         Account.find({'accountID':req.query.id},function(err,results){
+            if(Boolean(results[0].flag)==true){
+                res.send("没有这个账号啊");
+                return;
+            }
             if (err){
                 console.log(err);
                 res.status(500).json(err);
@@ -282,6 +297,10 @@ module.exports = function (app) {
     //取款 用accountID查
     app.post('/account/withdraw',function (req,res){
         Account.find({'accountID':req.query.id},function(err,results){
+            if(Boolean(results[0].flag)==true){
+                res.send("没有这个账号啊");
+                return;
+            }
             if (err){
                 console.log(err);
                 res.status(500).json(err);
