@@ -187,11 +187,17 @@ module.exports = function (app) {
                     });
                 }
             });    
-        }).then(()=>{
-
         })
-        
-
+    });
+    app.delete('/record/:id', (req, res)=> {
+        Record.findByIdAndRemove({
+            _id: req.params.id
+        }).then(record=>{record.save().then(record=>{
+            res.json(record);
+        })
+    }).catch(err=>{
+        return res.status(404).json(err);
+    })
     });
     // account
     //获取所有account信息
