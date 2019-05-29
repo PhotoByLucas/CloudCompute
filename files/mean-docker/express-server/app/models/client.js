@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 module.exports = mongoose.model('Client',{
     clientID:{
-        type:String,
+        type:Number,
         default:''
     },
 

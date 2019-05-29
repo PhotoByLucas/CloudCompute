@@ -40,6 +40,8 @@ module.exports = function (app) {
             res.json(err);
         })
     });
+
+        
     // create todo and send back all todos after creation
     //增加新客户
     app.post('/client', (req, res) => {
@@ -47,36 +49,36 @@ module.exports = function (app) {
         let tempID=0;
         let tempdata={};
 
-        Client.count({}, (err, res)=>{
-            if (err) {
-                console.log("Error:" + err);
-            }
-            else {
-                console.log("Res:" + res);
-                tempID=res+1;
-            }
-        }).then(()=>{
-            // count函数查询为异步操作
-            tempdata=req.query;
-            tempdata.clientID=tempID;
+        Client.find({},{clientID:1}).then((err,client)=>{
+            console.log(client)
 
-            Client.create(tempdata,(err,ers)=>{
-                if(err){
-                    res.send('err1');
-                }else{
-                    Client.find(function (err, client) {
-        
-                        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                        if (err) {
-                            res.send('err2');
-                        }
-                
-                        res.json(client); // return all todos in JSON format
-                    });
-                }
-                });    
         })
+        // .then((err,resGroup)=>{
+        //     // console.log(resGroup)
+        //     console.log(resGroup[resGroup.length-1].id)
+        //     // 通过聚合函数拿到最大的id
+            
+        //     tempdata=req.query;
+        //     tempdata.clientID=(parseInt(resGroup[resGroup.length-1].id)+1).toString();
+
+        //     // Client.create(tempdata,(err,createClient)=>{
+        //     //     if(err){
+        //     //         res.send('err1');
+        //     //     }else{
+        //     //         Client.find(function (err, client) {
         
+        //     //             // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+        //     //             if (err) {
+        //     //                 res.send('err2');
+        //     //             }
+                
+        //     //             res.json(client); // return all todos in JSON format
+        //     //         });
+        //     //     }
+        //     //     });  
+        // })
+
+
 
     });
     //更新个人信息

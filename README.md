@@ -30,6 +30,7 @@
           ~~~
           
   + 数据库
+    + 本地docker mongo连接配置文件 config/database.js
     + express-server/app/models
       + 每一个表为一个model,统一命名为**xx model.js**
     + express-server/app/routes.js
