@@ -92,6 +92,9 @@ module.exports = function (app) {
             {clientID:req.query.id},
             {
                 name:req.query.name,
+                birthdate:req.query.birthdate,
+                address:req.query.address,
+                occupation:req.query.occupation,
             },
             { 
                 new:true
@@ -102,10 +105,10 @@ module.exports = function (app) {
     //修改密码
     app.put("/client/modifyPassword",(req,res)=>{
         Client.update(
-            {_id:req.params.id},
+            {clientID:req.query.id},
             {
                 
-                    password:req.body.password
+                    password:req.query.password,
                 
             },
             {
