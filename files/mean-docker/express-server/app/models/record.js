@@ -1,23 +1,23 @@
 var mongoose = require('mongoose');
 
-module.exports = mongoose.model('record', {
-    transitionIDt: {
-        type: String,
+module.exports = mongoose.model('Record', {
+    transitionID: {
+        type:String,
         default: ''
     },
 
     accountID: {
-        type: String,
+        type:String,
         default: ''
     },
 
     amount: {
-        type: int,
+        type:Number,
         default: '0'
     },
 
     receiver: {
-        type: String,
+        type:String,
         default: ''
     }
 
