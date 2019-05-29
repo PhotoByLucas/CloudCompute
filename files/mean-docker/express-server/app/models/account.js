@@ -16,4 +16,8 @@ module.exports = mongoose.model('Account', {
         default: '0'
     },
 
+    flag:{
+        type:Boolean,
+        default:'false'
+    }
 });
