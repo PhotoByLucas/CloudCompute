@@ -50,34 +50,31 @@ module.exports = function (app) {
         let tempID=0;
         let tempdata={};
 
-        Client.find({},{clientID:1}).then((err,client)=>{
-            console.log(client)
+        Client.count({},(err,clientcout)=>{
+            tempID=clientcout+1
+        }).then((err,resGroup)=>{
 
-        })
-        // .then((err,resGroup)=>{
-        //     // console.log(resGroup)
-        //     console.log(resGroup[resGroup.length-1].id)
-        //     // 通过聚合函数拿到最大的id
+            // 通过聚合函数拿到最大的id
             
-        //     tempdata=req.query;
-        //     tempdata.clientID=(parseInt(resGroup[resGroup.length-1].id)+1).toString();
+            tempdata=req.query;
+            tempdata.clientID=tempID
 
-        //     // Client.create(tempdata,(err,createClient)=>{
-        //     //     if(err){
-        //     //         res.send('err1');
-        //     //     }else{
-        //     //         Client.find(function (err, client) {
+            Client.create(tempdata,(err,createClient)=>{
+                if(err){
+                    res.send('err1');
+                }else{
+                    Client.find(function (err, client) {
         
-        //     //             // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        //     //             if (err) {
-        //     //                 res.send('err2');
-        //     //             }
+                        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                        if (err) {
+                            res.send('err2');
+                        }
                 
-        //     //             res.json(client); // return all todos in JSON format
-        //     //         });
-        //     //     }
-        //     //     });  
-        // })
+                        res.json(client); // return all todos in JSON format
+                    });
+                }
+                });  
+        })
     });
     //更新个人信息
     app.put("/client/modify",(req,res)=>{
