@@ -43,7 +43,7 @@ module.exports = function (app) {
     });
     // create todo and send back all todos after creation
     //增加新客户
-    app.post('/client', (req, res) => {
+     app.post('/client', (req, res) => {
         // 查询并设置id
         let tempID=0;
         let tempdata={};
@@ -54,7 +54,7 @@ module.exports = function (app) {
             }
             else {
                 console.log("Res:" + res);
-                tempID=res+1;
+                tempID=res+2;
             }
         }).then(()=>{
             // count函数查询为异步操作
@@ -79,7 +79,8 @@ module.exports = function (app) {
         })
         
 
-    });
+    }); 
+         
     //更新个人信息
     app.put("/client/modify",(req,res)=>{
         let tempClient={}
@@ -166,7 +167,7 @@ module.exports = function (app) {
             }
             else {
                 console.log("Res:" + res);
-                tempID=res+1;
+                tempID=res+2;
             }
         }).then(()=>{
             // count函数查询为异步操作
@@ -188,6 +189,8 @@ module.exports = function (app) {
                     });
                 }
             });    
+        }).then(()=>{
+
         })
         
 
@@ -223,7 +226,7 @@ module.exports = function (app) {
             }
             else {
                 console.log("Res:" + res);
-                tempID=res+1;
+                tempID=res+2;
             }
         }).then(()=>{
             // count函数查询为异步操作
@@ -234,7 +237,7 @@ module.exports = function (app) {
                 if(err){
                     res.send('err1');
                 }else{
-                    Client.find(function (err, account) {
+                    Account.find(function (err, account) {
         
                         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
                         if (err) {
@@ -257,5 +260,45 @@ module.exports = function (app) {
     }).catch(err=>{
         return res.status(404).json(err);
     })
+    });
+    //存款 用accountID查
+    app.post('/account/deposit',function (req,res){
+        Account.find({'accountID':req.query.id},function(err,results){
+            if (err){
+                console.log(err);
+                res.status(500).json(err);
+            }
+            let tempdata=Number(results[0].balance)+Number(req.query.balance);
+            Account.findOneAndUpdate({'accountID':req.query.id},{'balance':tempdata},function(err,results){
+                if (err){
+                    console.log(err);
+                    res.status(500).send({'err':err});
+                }
+            res.status(200).send(results);     
+            });
+        });
+    });
+    //取款 用accountID查
+    app.post('/account/withdraw',function (req,res){
+        Account.find({'accountID':req.query.id},function(err,results){
+            if (err){
+                console.log(err);
+                res.status(500).json(err);
+            }
+            let tempdata=Number(results[0].balance)-Number(req.query.balance);
+            if (tempdata>=0){
+            Account.findOneAndUpdate({'accountID':req.query.id},{'balance':tempdata},function(err,results){
+                if (err){
+                    console.log(err);
+                    res.status(500).send({'err':err});
+                }
+            res.status(200).send(results);     
+            });
+        }
+            else {
+                res.send("你的钱不够啊");
+                return;
+            }
+        });
     });
 };
