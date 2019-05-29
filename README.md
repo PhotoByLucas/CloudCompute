@@ -45,4 +45,14 @@
       + sudo docker pull mongo 拉取远程镜像
       + sudo docker run --name mongo -d mongo 在后台运行name为docker
       + sudo docker start mongo 运行镜像 
-
+## 接口需求文档
+### 登陆页面
++ 获取所有用户名与password
+### 用户信息
++ 根据id获取用户信息
++ 根据id修改用户信息
+### 银行卡号页面
++ 创建银行卡号
++ 删除银行卡号(暂缓）
+### 转账记录
++ 根据id查看本人转账记录

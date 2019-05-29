@@ -1,6 +1,7 @@
 var Todo = require('./models/todo');
 var Client = require('./models/client');
-
+var Record = require('./models/record');
+var Account = require('./models/account')
 function getTodos(res) {
     Todo.find(function (err, todos) {
 
@@ -121,10 +122,14 @@ module.exports = function (app) {
 
     // 删除客户信息
     app.delete('/client/:id', (req, res)=> {
-        Client.remove({
-            _id: req.params.todo_id
-        }).then(client=>res.send('${client.clientID}删除成功'))
-        .catch(err=>res.json(err));
+        Client.findByIdAndRemove({
+            _id: req.params.id
+        }).then(client=>{client.save().then(client=>{
+            res.json(client);
+        })
+    }).catch(err=>{
+        return res.status(404).json(err);
+    })
     });
     // application原本的agular输出前端模板 -------------------------------------------------------------
     // app.get('*', function (req, res) {
@@ -132,8 +137,169 @@ module.exports = function (app) {
     // });
 
 
-    // record
+    // record api-------------------------------------------------------------------------------------------------
+    //获取所有record信息
+    app.get('/record',(req,res)=>{
+        Record.find({}).then(records=>{
+            res.json(records);
+        })
+        .catch(err=>{
+            console.log('err');
+            res.json(err);
+        })
+    });
+    //获取单个record信息
+    app.get('/record/private',(req,res)=>{
+        Record.find({transitionID: req.query.id}).then(record=>{
+            res.json(record);
+        }).catch(err=>{
+            res.json(err);
+        })
+    });
+    //增加新record
+    app.post('/record', (req, res) => {
+        // 查询并设置transitionID
+        let tempID=0;
+        let tempdata={};
 
+        Record.count({}, (err, res)=>{
+            if (err) {
+                console.log("Error:" + err);
+            }
+            else {
+                console.log("Res:" + res);
+                tempID=res+2;
+            }
+        }).then(()=>{
+            // count函数查询为异步操作
+            tempdata=req.query;
+            tempdata.transitionID=tempID;
 
+           Record.create(tempdata,(err,ers)=>{
+                if(err){
+                    res.send('err1');
+                }else{
+                    Record.find(function (err, record) {
+        
+                        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                        if (err) {
+                            res.send('err2');
+                        }
+                
+                        res.json(record); // return all records in JSON format
+                    });
+                }
+            });    
+        }).then(()=>{
+
+        })
+        
+
+    });
     // account
+    //获取所有account信息
+    app.get('/account',(req,res)=>{
+        Account.find({}).then(accounts=>{
+            res.json(accounts);
+        })
+        .catch(err=>{
+            console.log('err');
+            res.json(err);
+        })
+    });
+    //获取一个account的信息
+    app.get('/account/private',(req,res)=>{
+        Account.findOne({accountID:req.query.id}).then(account=>{
+            res.json(account);
+        }).catch(err=>{
+            res.json(err);
+        })
+    });
+    //创建新卡
+    app.post('/account', (req, res) => {
+        // 查询并设置id
+        let tempID=0;
+        let tempdata={};
+
+        Account.count({}, (err, res)=>{
+            if (err) {
+                console.log("Error:" + err);
+            }
+            else {
+                console.log("Res:" + res);
+                tempID=res+2;
+            }
+        }).then(()=>{
+            // count函数查询为异步操作
+            tempdata=req.query;
+            tempdata.accountID=tempID;
+
+            Account.create(tempdata,(err,ers)=>{
+                if(err){
+                    res.send('err1');
+                }else{
+                    Account.find(function (err, account) {
+        
+                        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                        if (err) {
+                            res.send('err2');
+                        }
+                
+                        res.json(account); // return all todos in JSON format
+                    });
+                }
+            });    
+        })       
+    });
+    //销卡
+    app.delete('/account/:id', (req, res)=> {
+       Account.findByIdAndRemove({
+            _id: req.params.id
+        }).then(account=>{account.save().then(account=>{
+            res.json(account);
+        })
+    }).catch(err=>{
+        return res.status(404).json(err);
+    })
+    });
+    //存款 用accountID查
+    app.post('/account/deposit',function (req,res){
+        Account.find({'accountID':req.query.id},function(err,results){
+            if (err){
+                console.log(err);
+                res.status(500).json(err);
+            }
+            let tempdata=Number(results[0].balance)+Number(req.query.balance);
+            Account.findOneAndUpdate({'accountID':req.query.id},{'balance':tempdata},function(err,results){
+                if (err){
+                    console.log(err);
+                    res.status(500).send({'err':err});
+                }
+            res.status(200).send(results);     
+            });
+        });
+    });
+    //取款 用accountID查
+    app.post('/account/withdraw',function (req,res){
+        Account.find({'accountID':req.query.id},function(err,results){
+            if (err){
+                console.log(err);
+                res.status(500).json(err);
+            }
+            let tempdata=Number(results[0].balance)-Number(req.query.balance);
+            if (tempdata>=0){
+            Account.findOneAndUpdate({'accountID':req.query.id},{'balance':tempdata},function(err,results){
+                if (err){
+                    console.log(err);
+                    res.status(500).send({'err':err});
+                }
+            res.status(200).send(results);     
+            });
+        }
+            else {
+                res.send("你的钱不够啊");
+                return;
+            }
+        });
+    });
 };

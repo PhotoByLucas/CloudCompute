@@ -1,18 +1,18 @@
 var mongoose = require('mongoose');
 
-module.exports = mongoose.model('account', {
+module.exports = mongoose.model('Account', {
     clientID: {
-        type: String,
+        type:String,
         default: ''
     },
 
     accountID: {
-        type: String,
+        type:String,
         default: ''
     },
 
     balance: {
-        type: Int,
+        type:Number,
         default: '0'
     },
 
