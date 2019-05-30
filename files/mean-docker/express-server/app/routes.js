@@ -218,28 +218,63 @@ module.exports = function (app) {
             res.json(err);
         })
     });
-    //创建新卡
-    app.post('/account', (req, res) => {
-        // 随机生产id
-        //花花改成了随机生成accountid
-        let number=Math.floor(Math.random()*90000);
-        let balance=0;
-        var account = {
-            clientID: req.query.clientID,
-            currency: req.body.currency,
-            balance: balance,
-            accountID: number
-        };
-        accounts.create(account, function (err) {
-            if (err) {
-                console.log(err);
-                res.status(500).send(err);
-                return;
-            }
-            console.log("Account created");
-            res.json(account)
+        //创建新卡
+        app.post('/account', (req, res) => {
+            // 查询并设置id
+            let tempID=0;
+            let tempdata={};
+    
+            Account.count({}, (err, res)=>{
+                if (err) {
+                    console.log("Error:" + err);
+                }
+                else {
+                    console.log("Res:" + res);
+                    tempID=res+1;
+                }
+            }).then(()=>{
+                // count函数查询为异步操作
+                tempdata=req.query;
+                tempdata.accountID=tempID;
+    
+                Account.create(tempdata,(err,ers)=>{
+                    if(err){
+                        res.send('err1');
+                    }else{
+                        Client.find(function (err, account) {
+            
+                            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                            if (err) {
+                                res.send('err2');
+                            }
+                    
+                            res.json(account); // return all todos in JSON format
+                        });
+                    }
+                });    
+            })       
         });
-    });
+    // //创建新卡
+    // app.post('/account', (req, res) => {
+    //     // 随机生产id
+    //     //花花改成了随机生成accountid
+    //     let number=Math.floor(Math.random()*90000);
+    //     let balance=0;
+    //     var account = {
+    //         clientID: req.query.clientID,
+    //         balance: balance,
+    //         accountID: number
+    //     };
+    //     accounts.create(account, function (err) {
+    //         if (err) {
+    //             console.log(err);
+    //             res.status(500).send(err);
+    //             return;
+    //         }
+    //         console.log("Account created");
+    //         res.json(account)
+    //     });
+    // });
     //销卡
 /*     app.delete('/account/:id', (req, res)=> {
        Account.findByIdAndRemove({
