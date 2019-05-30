@@ -263,7 +263,7 @@ module.exports = function (app) {
         let tempdata={};
         tempdata=req.query;
         tempdata.accountID=number;
-        Account.create(tempdata, (err,ers)=> {
+        Account.create(tempdata, (err,res) =>{
             if(err){
                 res.send('err1');
             }else{
@@ -274,12 +274,45 @@ module.exports = function (app) {
                         res.send('err2');
                     }
             
-                    res.json(account); // return all todos in JSON format
-                });
-            }
+                    res.json(account); 
         });
     });
-    //销卡
+    // //创建新卡
+    // app.post('/account', (req, res) => {
+    //     // 查询并设置id
+    //     let tempID=0;
+    //     let tempdata={};
+
+    //     Account.count({}, (err, res)=>{
+    //         if (err) {
+    //             console.log("Error:" + err);
+    //         }
+    //         else {
+    //             console.log("Res:" + res);
+    //             tempID=res+1;
+    //         }
+    //     }).then(()=>{
+    //         // count函数查询为异步操作
+    //         tempdata=req.query;
+    //         tempdata.accountID=tempID;
+
+    //         Account.create(tempdata,(err,res)=>{
+                // if(err){
+                //     res.send('err1');
+                // }else{
+                //     Client.find(function (err, account) {
+        
+                //         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                //         if (err) {
+                //             res.send('err2');
+                //         }
+                
+                //         res.json(account); // return all todos in JSON format
+    //                 });
+    //             }
+    //         });    
+    //     })       
+    // });
 /*     app.delete('/account/:id', (req, res)=> {
        Account.findByIdAndRemove({
             _id: req.params.id
