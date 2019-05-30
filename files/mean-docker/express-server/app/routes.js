@@ -212,73 +212,146 @@ module.exports = function (app) {
     });
     //获取一个account的信息
     app.get('/account/private',(req,res)=>{
-        Account.findOne({accountID:req.query.id}).then(account=>{
+        Account.find({clientID:req.query.id}).then(account=>{
             res.json(account);
         }).catch(err=>{
             res.json(err);
         })
     });
-        //创建新卡
-        app.post('/account', (req, res) => {
-            // 查询并设置id
-            let tempID=0;
-            let tempdata={};
-    
-            Account.count({}, (err, res)=>{
-                if (err) {
-                    console.log("Error:" + err);
-                }
-                else {
-                    console.log("Res:" + res);
-                    tempID=res+1;
-                }
-            }).then(()=>{
-                // count函数查询为异步操作
-                tempdata=req.query;
-                tempdata.accountID=tempID;
-    
-                Account.create(tempdata,(err,ers)=>{
-                    if(err){
-                        res.send('err1');
-                    }else{
-                        Client.find(function (err, account) {
-            
-                            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                            if (err) {
-                                res.send('err2');
-                            }
-                    
-                            res.json(account); // return all todos in JSON format
-                        });
-                    }
-                });    
-            })       
-        });
     //创建新卡
     app.post('/account', (req, res) => {
-        // 随机生产id
-        //花花改成了随机生成accountid
-        let number=Math.floor(Math.random()*90000);
-        let balance=0;
+        // 查询并设置id
+        let tempID=0;
         let tempdata={};
-        tempdata=req.query;
-        tempdata.accountID=number;
-        Account.create(tempdata, (err,res) =>{
-            if(err){
-                res.send('err1');
-            }else{
-                Account.find(function (err, account) {
-    
-                    // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                    if (err) {
-                        res.send('err2');
-                    }
-            
-                    res.json(account); 
-                });
+
+        Account.count({}, (err, res)=>{
+            if (err) {
+                console.log("Error:" + err);
             }
+            else {
+                console.log("Res:" + res);
+                tempID=res+1;
+            }
+        }).then(()=>{
+            // count函数查询为异步操作
+            tempdata=req.query;
+            tempdata.accountID=tempID;
+
+            Account.create(tempdata,(err,ers)=>{
+                if(err){
+                    res.send('err1');
+                }else{
+                    Account.find(function (err, account) {
+        
+                        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                        if (err) {
+                            res.send('err2');
+                        }
+                
+                        res.json(account); // return all todos in JSON format
+                    });
+                }
+            });    
+        })       
+    });
+    //创建新卡 
+    // app.post('/account', (req, res) => {
+    //     // 随机生产id
+    //     //花花改成了随机生成accountid
+    //     let number=Math.floor(Math.random()*90000);
+    //     let balance=0;
+    //     let tempdata={};
+    //     tempdata=req.query;
+    //     tempdata.accountID=number;
+    //     Account.create(tempdata, (err,res) =>{
+    //         if(err){
+    //             res.send('err1');
+    //         }else{
+    //             Account.find(function (err, account) {
+    
+    //                 // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+    //                 if (err) {
+    //                     res.send('err2');
+    //                 }
+            
+    //                 res.json(account); 
+    //             });
+    //         }
+    //     });
+    // })
+
+    app.put("/account/delete",(req,res)=>{
+        Account.update(
+            {accountID:req.query.id},
+            {
+                
+                    flag: true
+                
+            },
+            {
+                new:true
+            }).then(account=>res.json(account))
+            .catch(err=>res.json(err));
+    });
+    //存款 用accountID查
+    app.post("/account/deposit",function (req,res){
+        Account.find({'accountID':req.query.id},function(err,results){
+            if(Boolean(results[0].flag)==true){
+                res.send("没有这个账号啊");
+                return;
+            }
+            if (err){
+                console.log(err);
+                res.status(500).json(err);
+            }
+            let tempdata=Number(results[0].balance)+Number(req.query.balance);
+            Account.findOneAndUpdate({'accountID':req.query.id},{'balance':tempdata},function(err,updateResults){
+                // console.log(updateResults)
+                if (err){
+                    console.log(err);
+                    res.status(500).send({'err':err});
+                }
+            });
+        }).then(()=>{
+            Account.find({'accountID':req.query.id},function(err,results){
+                
+                res.status(200).send(results);     
+
+            })
         });
-    // //创建新卡
+    });
+    //取款 用accountID查
+    app.post('/account/withdraw',function (req,res){
+        Account.find({'accountID':req.query.id},function(err,results){
+            if(Boolean(results[0].flag)==true){
+                res.send("没有这个账号啊");
+                return;
+            }
+            if (err){
+                console.log(err);
+                res.status(500).json(err);
+            }
+            let tempdata=Number(results[0].balance)-Number(req.query.balance);
+            if (tempdata>=0){
+            Account.findOneAndUpdate({'accountID':req.query.id},{'balance':tempdata},function(err,results){
+                if (err){
+                    console.log(err);
+                    res.status(500).send({'err':err});
+                }
+            });
+        }
+            else {
+                res.send("你的钱不够啊");
+                return;
+            }
+        }).then(()=>{
+            Account.find({'accountID':req.query.id},function(err,results){
+                res.status(200).send(results);     
+            })
+
+        });
+    });
+        // //创建新卡
     // app.post('/account', (req, res) => {
     //     // 查询并设置id
     //     let tempID=0;
@@ -325,67 +398,4 @@ module.exports = function (app) {
     })
     });
  */
-app.put("/account/delete",(req,res)=>{
-    Account.update(
-        {accountID:req.query.id},
-        {
-            
-                flag: true
-            
-        },
-        {
-            new:true
-        }).then(account=>res.json(account))
-        .catch(err=>res.json(err));
-});
-    //存款 用accountID查
-    app.post('/account/deposit',function (req,res){
-        
-        Account.find({'accountID':req.query.id},function(err,results){
-            if(Boolean(results[0].flag)==true){
-                res.send("没有这个账号啊");
-                return;
-            }
-            if (err){
-                console.log(err);
-                res.status(500).json(err);
-            }
-            let tempdata=Number(results[0].balance)+Number(req.query.balance);
-            Account.findOneAndUpdate({'accountID':req.query.id},{'balance':tempdata},function(err,results){
-                if (err){
-                    console.log(err);
-                    res.status(500).send({'err':err});
-                }
-            res.status(200).send(results);     
-            });
-        });
-    });
-    //取款 用accountID查
-    app.post('/account/withdraw',function (req,res){
-        Account.find({'accountID':req.query.id},function(err,results){
-            if(Boolean(results[0].flag)==true){
-                res.send("没有这个账号啊");
-                return;
-            }
-            if (err){
-                console.log(err);
-                res.status(500).json(err);
-            }
-            let tempdata=Number(results[0].balance)-Number(req.query.balance);
-            if (tempdata>=0){
-            Account.findOneAndUpdate({'accountID':req.query.id},{'balance':tempdata},function(err,results){
-                if (err){
-                    console.log(err);
-                    res.status(500).send({'err':err});
-                }
-            res.status(200).send(results);     
-            });
-        }
-            else {
-                res.send("你的钱不够啊");
-                return;
-            }
-        });
-    });
-})
-};
+}
