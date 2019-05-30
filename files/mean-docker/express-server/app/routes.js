@@ -267,7 +267,7 @@ module.exports = function (app) {
             if(err){
                 res.send('err1');
             }else{
-                Client.find(function (err, account) {
+                Account.find(function (err, account) {
     
                     // if there is an error retrieving, send the error. nothing after res.send(err) will execute
                     if (err) {
