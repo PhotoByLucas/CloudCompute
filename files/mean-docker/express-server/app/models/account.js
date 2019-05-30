@@ -8,7 +8,7 @@ module.exports = mongoose.model('Account', {
 
     accountID: {
         type:String,
-        default: ''
+        default: '1'
     },
 
     balance: {
