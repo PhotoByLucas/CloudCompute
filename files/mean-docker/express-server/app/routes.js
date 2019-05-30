@@ -220,39 +220,25 @@ module.exports = function (app) {
     });
     //创建新卡
     app.post('/account', (req, res) => {
-        // 查询并设置id
-        let tempID=0;
-        let tempdata={};
-
-        Account.count({}, (err, res)=>{
+        // 随机生产id
+        //花花改成了随机生成accountid
+        let number=Math.floor(Math.random()*90000);
+        let balance=0;
+        var account = {
+            clientID: req.query.clientID,
+            currency: req.body.currency,
+            balance: balance,
+            accountID: number
+        };
+        accounts.create(account, function (err) {
             if (err) {
-                console.log("Error:" + err);
+                console.log(err);
+                res.status(500).send(err);
+                return;
             }
-            else {
-                console.log("Res:" + res);
-                tempID=res+1;
-            }
-        }).then(()=>{
-            // count函数查询为异步操作
-            tempdata=req.query;
-            tempdata.accountID=tempID;
-
-            Account.create(tempdata,(err,ers)=>{
-                if(err){
-                    res.send('err1');
-                }else{
-                    Account.find(function (err, account) {
-        
-                        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                        if (err) {
-                            res.send('err2');
-                        }
-                
-                        res.json(account); // return all todos in JSON format
-                    });
-                }
-            });    
-        })       
+            console.log("Account created");
+            res.json(account)
+        });
     });
     //销卡
 /*     app.delete('/account/:id', (req, res)=> {
@@ -281,6 +267,7 @@ app.put("/account/delete",(req,res)=>{
 });
     //存款 用accountID查
     app.post('/account/deposit',function (req,res){
+        
         Account.find({'accountID':req.query.id},function(err,results){
             if(Boolean(results[0].flag)==true){
                 res.send("没有这个账号啊");
