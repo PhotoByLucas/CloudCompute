@@ -1,12 +1,29 @@
+## 使用说明
+1. git clone 项目
+2. 安装docker docker-composer
+3. 在mean-docker下 sudo ./test
+--- 
+## 项目功能
+1. 实现银行权限管理
+2. 账户之间的转账
+3. 用户修改个人信息
+4. 用户注册账户
+---
+## 部署
 ### 部署服务器 http://148.100.87.15:8080
 ### api访问示例 http://148.100.87.15:8080/api/todos
 ---
 ## 开发说明
+### 本地开发环境配置
+  1. 本地安装 docker docker-composer
+  2. 拉取mongodb镜像 
+  3. npm install
+  4. npm start 
 ### 文件目录结构
   + 前端
     + meandocker中的vue-client文件 基于vue构建
     + 构建后打包的静态文件模板在express-server中的dist
-    + 计划引入 axios element.ui
+    + 引入 axios element.ui
     + 通过接口直接请求后端输出
   + 后端
     + 启动后端文件 在express-server下运行 **node server.js**
@@ -45,6 +62,7 @@
       + sudo docker pull mongo 拉取远程镜像
       + sudo docker run --name mongo -d mongo 在后台运行name为docker
       + sudo docker start mongo 运行镜像 
+---
 ## 接口需求文档
 ### 登陆页面
 + 获取所有用户名与password
