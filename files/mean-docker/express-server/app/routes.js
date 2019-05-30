@@ -275,8 +275,9 @@ module.exports = function (app) {
                     }
             
                     res.json(account); 
+                });
+            }
         });
-    });
     // //创建新卡
     // app.post('/account', (req, res) => {
     //     // 查询并设置id
@@ -386,4 +387,5 @@ app.put("/account/delete",(req,res)=>{
             }
         });
     });
+})
 };
