@@ -254,27 +254,31 @@ module.exports = function (app) {
                 });    
             })       
         });
-    // //创建新卡
-    // app.post('/account', (req, res) => {
-    //     // 随机生产id
-    //     //花花改成了随机生成accountid
-    //     let number=Math.floor(Math.random()*90000);
-    //     let balance=0;
-    //     var account = {
-    //         clientID: req.query.clientID,
-    //         balance: balance,
-    //         accountID: number
-    //     };
-    //     accounts.create(account, function (err) {
-    //         if (err) {
-    //             console.log(err);
-    //             res.status(500).send(err);
-    //             return;
-    //         }
-    //         console.log("Account created");
-    //         res.json(account)
-    //     });
-    // });
+    //创建新卡
+    app.post('/account', (req, res) => {
+        // 随机生产id
+        //花花改成了随机生成accountid
+        let number=Math.floor(Math.random()*90000);
+        let balance=0;
+        let tempdata={};
+        tempdata=req.query;
+        tempdata.accountID=number;
+        Account.create(tempdata, (err,ers)=> {
+            if(err){
+                res.send('err1');
+            }else{
+                Client.find(function (err, account) {
+    
+                    // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                    if (err) {
+                        res.send('err2');
+                    }
+            
+                    res.json(account); // return all todos in JSON format
+                });
+            }
+        });
+    });
     //销卡
 /*     app.delete('/account/:id', (req, res)=> {
        Account.findByIdAndRemove({
