@@ -103,7 +103,7 @@ module.exports = function (app) {
         .catch(err=>res.json(err));
     });
     //修改密码
-    app.put("/client/modifyPassword",(req,res)=>{
+    app.post("/client/modifyPassword",(req,res)=>{
         Client.update(
             {clientID:req.query.id},
             {
@@ -163,11 +163,8 @@ module.exports = function (app) {
             if (err) {
                 console.log("Error:" + err);
             }
-            else {
-                console.log("Res:" + res);
-                tempID=res+1;
-            }
-        }).then(()=>{
+            tempID=res+1;  
+        }).then(()=>{    
             // count函数查询为异步操作
             tempdata=req.query;
             tempdata.transitionID=tempID;
@@ -223,20 +220,20 @@ module.exports = function (app) {
         // 查询并设置id
         let tempID=0;
         let tempdata={};
-
+        
         Account.count({}, (err, res)=>{
             if (err) {
                 console.log("Error:" + err);
             }
-            else {
-                console.log("Res:" + res);
                 tempID=res+1;
-            }
         }).then(()=>{
             // count函数查询为异步操作
             tempdata=req.query;
             tempdata.accountID=tempID;
-
+            Client.findOne({clientID:req.query.clientID},function(err,results){
+                if (err) res.status(500).json(err);
+                tempdata.clientName = results.name;
+            }).then(()=>{
             Account.create(tempdata,(err,ers)=>{
                 if(err){
                     res.send('err1');
@@ -251,7 +248,8 @@ module.exports = function (app) {
                         res.json(account); // return all todos in JSON format
                     });
                 }
-            });    
+            }); 
+        })   
         })       
     });
     //创建新卡 
