@@ -16,6 +16,10 @@ module.exports = mongoose.model('Account', {
         default: '0'
     },
 
+    clientName:{
+        type: String,
+       default:''
+    },
     flag:{
         type:Boolean,
         default:'false'
