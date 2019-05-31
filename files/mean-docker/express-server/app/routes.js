@@ -128,10 +128,7 @@ module.exports = function (app) {
         return res.status(404).json(err);
     })
     });
-    // application原本的agular输出前端模板 -------------------------------------------------------------
-    // app.get('*', function (req, res) {
-    //     res.sendFile(__dirname + '/public/dist/index.html'); // load the single view file (angular will handle the page changes on the front-end)
-    // });
+
 
 
     // record api-------------------------------------------------------------------------------------------------
@@ -398,4 +395,8 @@ module.exports = function (app) {
     })
     });
  */
+        // application原本的agular输出前端模板 -------------------------------------------------------------
+    // app.get('*', function (req, res) {
+    //     res.sendFile(__dirname + '/../dist/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+    // });
 }
